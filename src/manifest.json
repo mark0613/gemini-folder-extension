@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini Folder Extension",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "src/background/index.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://gemini.google.com/*"
+      ],
+      "js": [
+        "src/content/index.jsx"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://gemini.google.com/*"
+  ]
+}
