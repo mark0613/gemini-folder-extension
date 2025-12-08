@@ -1,0 +1,282 @@
+/* Overlay base styles */
+:root {
+  --gf-bg-sidebar: #1e1f20;
+  --gf-bg-header: #1e1f20;
+  /* Same as sidebar for now */
+  --gf-border: #444746;
+  --gf-text-primary: #e3e3e3;
+  --gf-text-secondary: #c4c7c5;
+  --gf-text-muted: #8e918f;
+  --gf-text-danger: #ff4d4f;
+  /* Salmon for dark mode */
+
+  --gf-btn-bg: #2b2c2e;
+  --gf-btn-hover: #3c4043;
+  --gf-btn-primary-bg: #373e4b;
+  --gf-btn-primary-color: #a8c7fa;
+
+  --gf-hover-bg: #2b2c2e;
+  --gf-active-bg: #373e4b;
+  --gf-active-border: #a8c7fa;
+
+  --gf-input-border: #a8c7fa;
+}
+
+/* Light Mode Overrides */
+.gf-theme-light {
+  --gf-bg-sidebar: #ffffff;
+  --gf-bg-header: #ffffff;
+  --gf-border: #e3e3e3;
+  --gf-text-primary: #1f1f1f;
+  --gf-text-secondary: #444746;
+  --gf-text-muted: #757575;
+  --gf-text-danger: #d93025;
+  /* Red for light mode */
+
+  --gf-btn-bg: #f0f4f9;
+  --gf-btn-hover: #e3e3e3;
+  --gf-btn-primary-bg: #d3e3fd;
+  /* Light blueish */
+  --gf-btn-primary-color: #041e49;
+
+  --gf-hover-bg: #f0f4f9;
+  --gf-active-bg: #d3e3fd;
+  --gf-active-border: #0b57d0;
+
+  --gf-input-border: #0b57d0;
+}
+
+#gemini-folder-overlay-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  /* Ensure full viewport coverage for layout context */
+  z-index: 9900;
+  /* Slightly below MAX_INT to avoid quirks */
+  pointer-events: none;
+  /* Let clicks pass through empty space */
+  font-family: 'Google Sans', Roboto, sans-serif;
+}
+
+.gf-sidebar {
+  pointer-events: auto;
+  position: relative;
+  /* Ensure it respects stacking context */
+  z-index: 9901;
+  /* Higher than root */
+  height: 100vh;
+  background-color: var(--gf-bg-sidebar);
+  border-right: 1px solid var(--gf-border);
+  display: flex;
+  flex-direction: column;
+  color: var(--gf-text-primary);
+  transition: transform 0.3s ease-in-out, background-color 0.2s, color 0.2s;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.gf-sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+.gf-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--gf-border);
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  background-color: var(--gf-bg-header);
+}
+
+.gf-action-btn {
+  flex: 1;
+  background-color: var(--gf-btn-bg);
+  border: 1px solid var(--gf-border);
+  color: var(--gf-text-secondary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+
+.gf-action-btn:hover {
+  background-color: var(--gf-btn-hover);
+}
+
+.gf-action-btn.primary {
+  background-color: var(--gf-btn-primary-bg);
+  color: var(--gf-btn-primary-color);
+  border-color: var(--gf-btn-hover);
+}
+
+.gf-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* Scrollbar styling */
+.gf-scroll-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.gf-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gf-scroll-area::-webkit-scrollbar-thumb {
+  background-color: var(--gf-border);
+  border-radius: 4px;
+}
+
+/* Folder & Chat Items */
+.gf-folder-section {
+  margin-bottom: 4px;
+}
+
+.gf-folder-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--gf-text-primary);
+  transition: background-color 0.1s;
+}
+
+.gf-folder-header:hover {
+  background-color: var(--gf-hover-bg);
+}
+
+.gf-folder-header.drag-over {
+  background-color: var(--gf-hover-bg);
+  border: 2px dashed var(--gf-active-border);
+}
+
+.gf-folder-content {
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.gf-chat-item {
+  padding: 8px 16px 8px 36px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--gf-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+
+.gf-chat-item:hover {
+  background-color: var(--gf-hover-bg);
+}
+
+.gf-chat-item.active {
+  background-color: var(--gf-active-bg);
+  color: var(--gf-text-primary);
+  border-left-color: var(--gf-active-border);
+}
+
+.gf-uncategorized-header {
+  padding: 12px 16px 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--gf-text-muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Utilities */
+.gf-input {
+  background: transparent;
+  border: 1px solid var(--gf-input-border);
+  color: var(--gf-text-primary);
+  border-radius: 4px;
+  padding: 4px 8px;
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.gf-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--gf-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gf-icon-btn:hover {
+  background-color: rgba(128, 128, 128, 0.15);
+  /* More generic hover for both themes */
+  color: var(--gf-text-primary);
+}
+
+/* Folder Menu */
+.gf-folder-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--gf-btn-bg);
+  border: 1px solid var(--gf-border);
+  border-radius: 4px;
+  z-index: 100;
+  padding: 4px;
+  min-width: 120px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.gf-folder-menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99;
+  /* Below menu, above everything else */
+  cursor: default;
+}
+
+.gf-menu-item {
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--gf-text-primary);
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+.gf-menu-item:hover {
+  background-color: var(--gf-hover-bg);
+}
+
+.gf-menu-item.delete {
+  color: var(--gf-text-danger);
+}
+
+.gf-menu-colors {
+  padding: 8px;
+  border-top: 1px solid var(--gf-border);
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
