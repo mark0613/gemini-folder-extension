@@ -15,7 +15,7 @@
   --gf-btn-primary-bg: #373e4b;
   --gf-btn-primary-color: #a8c7fa;
 
-  --gf-hover-bg: #2b2c2e;
+  --gf-hover-bg: #3c4043;
   --gf-active-bg: #373e4b;
   --gf-active-border: #a8c7fa;
 
@@ -39,7 +39,7 @@
   /* Light blueish */
   --gf-btn-primary-color: #041e49;
 
-  --gf-hover-bg: #f0f4f9;
+  --gf-hover-bg: #e3e3e3;
   --gf-active-bg: #d3e3fd;
   --gf-active-border: #0b57d0;
 
@@ -171,9 +171,6 @@
   cursor: pointer;
   font-size: 14px;
   color: var(--gf-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: block;
   text-decoration: none;
   border-left: 3px solid transparent;
@@ -228,18 +225,67 @@
   color: var(--gf-text-primary);
 }
 
-/* Folder Menu */
+/* Base & Chat Menus */
+.gf-helper-menu,
+.gf-folder-menu {
+  /* Common menu styles */
+  background-color: var(--gf-btn-bg);
+  border: 1px solid var(--gf-border);
+  border-radius: 4px;
+  z-index: 10000;
+  /* Ensure high z-index */
+  padding: 4px;
+  min-width: 120px;
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); defined separately or commonly */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
 .gf-folder-menu {
   position: absolute;
   right: 0;
   top: 100%;
-  background-color: var(--gf-btn-bg);
-  border: 1px solid var(--gf-border);
+}
+
+.gf-helper-menu {
+  /* Specifics for chat menu if any distinct from folder menu */
+  width: max-content;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Scrollbar for menu */
+.gf-helper-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.gf-helper-menu::-webkit-scrollbar-thumb {
+  background-color: var(--gf-border);
+  border-radius: 3px;
+}
+
+.gf-menu-item {
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--gf-text-primary);
+  font-size: 13px;
   border-radius: 4px;
-  z-index: 100;
-  padding: 4px;
-  min-width: 120px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.1s;
+}
+
+.gf-menu-item:hover {
+  background-color: var(--gf-hover-bg);
+  color: var(--gf-text-primary);
+}
+
+.gf-menu-item.delete {
+  color: var(--gf-text-danger);
+}
+
+.gf-menu-item.delete:hover {
+  background-color: rgba(255, 77, 79, 0.1);
 }
 
 .gf-folder-menu-backdrop {
@@ -249,27 +295,7 @@
   width: 100vw;
   height: 100vh;
   z-index: 99;
-  /* Below menu, above everything else */
   cursor: default;
-}
-
-.gf-menu-item {
-  padding: 8px;
-  cursor: pointer;
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  color: var(--gf-text-primary);
-  font-size: 13px;
-  border-radius: 4px;
-}
-
-.gf-menu-item:hover {
-  background-color: var(--gf-hover-bg);
-}
-
-.gf-menu-item.delete {
-  color: var(--gf-text-danger);
 }
 
 .gf-menu-colors {
@@ -279,4 +305,17 @@
   gap: 4px;
   flex-wrap: wrap;
   margin-top: 4px;
+}
+
+.gf-chat-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.gf-chat-item:hover .gf-chat-actions,
+.gf-chat-actions.active {
+  opacity: 1;
 }
