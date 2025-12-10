@@ -217,6 +217,32 @@ export const StorageService = {
         }
     },
 
+    async removeChats(chatIds) {
+        if (!chatIds || chatIds.length === 0) return;
+
+        const { folders } = await this.getFoldersData();
+        const chatCache = await this.getChatCache();
+
+        // 1. Remove from cache
+        chatIds.forEach(id => delete chatCache[id]);
+
+        // 2. Remove from folders
+        let foldersChanged = false;
+        Object.keys(folders).forEach(folderId => {
+            const folder = folders[folderId];
+            const initialLength = folder.chatIds.length;
+            folder.chatIds = folder.chatIds.filter(id => !chatIds.includes(id));
+            if (folder.chatIds.length !== initialLength) {
+                foldersChanged = true;
+            }
+        });
+
+        await setStorage({ [STORAGE_KEYS.CHAT_CACHE]: chatCache });
+        if (foldersChanged) {
+            await this.updateFolders(folders);
+        }
+    },
+
     async moveChatToFolder(chatId, targetFolderId) {
         const { folders } = await this.getFoldersData();
         let changed = false;

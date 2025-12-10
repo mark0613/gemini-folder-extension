@@ -86,8 +86,45 @@ class ChatObserver {
         // Simple debounce
         if (this.debounceTimer) clearTimeout(this.debounceTimer);
         this.debounceTimer = setTimeout(() => {
+            // 1. Process Updates
             if (needsScan) this.scanList();
+
+            // 2. Process Deletions
+            this.processDeletions();
         }, 250);
+    }
+
+    async processDeletions() {
+        if (this.pendingDeletions.size === 0) return;
+
+        const idsToDelete = [];
+        const root = document.querySelector(SELECTORS.ROOT_CONTAINER);
+
+        // If root is gone, abort everything (page unload?)
+        if (!root) {
+            this.pendingDeletions.clear();
+            return;
+        }
+
+        this.pendingDeletions.forEach(id => {
+            // Double Check: Is this ID present in the CURRENT DOM?
+            // We construct a partial selector or assume standard scanList would find it.
+            // But strict check is faster:
+            // jslog contains id. selector = div[jslog*="c_ID"]
+            const selector = `div[jslog*="${id}"]`;
+            const exists = document.querySelector(selector);
+
+            if (!exists) {
+                idsToDelete.push(id);
+            }
+        });
+
+        this.pendingDeletions.clear();
+
+        if (idsToDelete.length > 0) {
+            console.log('Gemini Folder: Confirmed deletions:', idsToDelete);
+            await StorageService.removeChats(idsToDelete);
+        }
     }
 
     async scanList() {
