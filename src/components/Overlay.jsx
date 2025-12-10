@@ -13,7 +13,7 @@ export const Overlay = () => {
     const [chatCache, setChatCache] = useState({});
     // eslint-disable-next-line no-unused-vars
     const [activeChatId, setActiveChatId] = useState(null);
-    const [isInitialized, setIsInitialized] = useState(false); // Wait for storage load
+    const [isInitialized, setIsInitialized] = useState(false);
 
     // Width constant, moved from CSS for dynamic control
     const SIDEBAR_WIDTH = 308;
@@ -37,19 +37,25 @@ export const Overlay = () => {
 
         // Listen for changes from other tabs or the observer
         const handleStorageChange = (changes, area) => {
-            if (area === 'sync') {
-                if (changes[STORAGE_KEYS.ENABLED]) {
-                    setEnabled(changes[STORAGE_KEYS.ENABLED].newValue);
+            if (changes[STORAGE_KEYS.ENABLED]) {
+                setEnabled(changes[STORAGE_KEYS.ENABLED].newValue);
+            }
+
+            if (changes[STORAGE_KEYS.FOLDERS]) {
+                let raw = changes[STORAGE_KEYS.FOLDERS].newValue;
+                if (typeof raw === 'string') {
+                    StorageService.getFoldersData().then(data => setFolders(data.folders));
+                } else if (raw) {
+                    setFolders(raw);
                 }
-                if (changes[STORAGE_KEYS.FOLDERS]) {
-                    setFolders(changes[STORAGE_KEYS.FOLDERS].newValue);
-                }
-                if (changes[STORAGE_KEYS.FOLDER_ORDER]) {
-                    setFolderOrder(changes[STORAGE_KEYS.FOLDER_ORDER].newValue);
-                }
-                if (changes[STORAGE_KEYS.CHAT_CACHE]) {
-                    setChatCache(changes[STORAGE_KEYS.CHAT_CACHE].newValue);
-                }
+            }
+
+            if (changes[STORAGE_KEYS.FOLDER_ORDER]) {
+                setFolderOrder(changes[STORAGE_KEYS.FOLDER_ORDER].newValue || []);
+            }
+
+            if (changes[STORAGE_KEYS.CHAT_CACHE]) {
+                setChatCache(changes[STORAGE_KEYS.CHAT_CACHE].newValue || {});
             }
         };
 
@@ -104,17 +110,17 @@ export const Overlay = () => {
 
     // Calculate chats in folders vs uncategorized
     const chatsInFolders = new Set();
-    Object.values(folders).forEach(f => {
+    Object.values(folders || {}).forEach(f => {
         if (f.chatIds) f.chatIds.forEach(id => chatsInFolders.add(id));
     });
 
-    const uncategorizedChats = Object.entries(chatCache)
+    const uncategorizedChats = Object.entries(chatCache || {})
         .filter(([id]) => !chatsInFolders.has(id))
         .map(([id, data]) => ({ id, ...data }))
         .sort((a, b) => {
             // Hybrid Sorting: Active (Visible) first, then Historical (Last Sync)
             const NOW = Date.now();
-            const ACTIVE_THRESHOLD = 5 * 60 * 1000; // 5 minutes
+            const ACTIVE_THRESHOLD = 5 * 60 * 1000;
 
             const aIsActive = (NOW - (a.lastSync || 0)) < ACTIVE_THRESHOLD && a.domIndex !== undefined;
             const bIsActive = (NOW - (b.lastSync || 0)) < ACTIVE_THRESHOLD && b.domIndex !== undefined;
@@ -149,7 +155,6 @@ export const Overlay = () => {
 
         return () => themeObserver.disconnect();
     }, []);
-
 
     if (!isInitialized) return null;
 

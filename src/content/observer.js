@@ -17,7 +17,7 @@ class ChatObserver {
         this.observer = null;
         this.isObserving = false;
         this.debounceTimer = null;
-        this.pendingUpdates = {}; // { chatId: title }
+        this.pendingDeletions = new Set(); // Store IDs to verify for deletion
     }
 
     start() {
@@ -55,10 +55,38 @@ class ChatObserver {
     }
 
     handleMutations(mutations) {
-        // Simple debounce to avoid spamming storage on heavy DOM updates
+        let needsScan = false;
+
+        mutations.forEach(mutation => {
+            if (mutation.type === 'childList') {
+                // Check Removed Nodes for Deletion
+                mutation.removedNodes.forEach(node => {
+                    if (node.nodeType === 1) { // Element
+                        // Try to find the chat ID in the removed node
+                        // It might be the node itself or a wrapper
+                        const conversionDiv = node.matches && node.matches(SELECTORS.ITEM_WITH_JSLOG)
+                            ? node
+                            : (node.querySelector ? node.querySelector(SELECTORS.ITEM_WITH_JSLOG) : null);
+
+                        if (conversionDiv) {
+                            const jslog = conversionDiv.getAttribute('jslog');
+                            const match = jslog && jslog.match(ID_REGEX);
+                            if (match && match[1]) {
+                                this.pendingDeletions.add(match[1]);
+                            }
+                        }
+                    }
+                });
+                needsScan = true;
+            } else if (mutation.type === 'characterData' || mutation.type === 'attributes') {
+                needsScan = true;
+            }
+        });
+
+        // Simple debounce
         if (this.debounceTimer) clearTimeout(this.debounceTimer);
         this.debounceTimer = setTimeout(() => {
-            this.scanList();
+            if (needsScan) this.scanList();
         }, 250);
     }
 

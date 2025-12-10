@@ -1,3 +1,5 @@
+import LZString from 'lz-string';
+
 export const STORAGE_KEYS = {
     FOLDER_ORDER: 'folderOrder',
     FOLDERS: 'folders',
@@ -20,42 +22,97 @@ const DEFAULT_SETTINGS = {
     customColors: [],
 };
 
+// Define Storage Areas
+const STORAGE_AREAS = {
+    [STORAGE_KEYS.CHAT_CACHE]: 'local',
+    [STORAGE_KEYS.FOLDERS]: 'sync',
+    [STORAGE_KEYS.FOLDER_ORDER]: 'sync',
+    [STORAGE_KEYS.SETTINGS]: 'sync',
+    [STORAGE_KEYS.ENABLED]: 'sync',
+};
+
 /**
- * Wraps chrome.storage.sync.get with a promise.
- * @param {string|string[]|Object} keys
- * @returns {Promise<Object>}
+ * Smart Getter: Routes keys to correct storage area (sync vs local)
  */
 const getStorage = (keys) => new Promise((resolve, reject) => {
-    chrome.storage.sync.get(keys, (result) => {
-        if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
+    const keyArray = Array.isArray(keys) ? keys : [keys];
+    const syncKeys = [];
+    const localKeys = [];
+
+    keyArray.forEach(key => {
+        if (STORAGE_AREAS[key] === 'local') {
+            localKeys.push(key);
         } else {
-            resolve(result);
+            syncKeys.push(key);
         }
     });
+
+    const promises = [];
+    if (syncKeys.length > 0) promises.push(new Promise(r => chrome.storage.sync.get(syncKeys, r)));
+    if (localKeys.length > 0) promises.push(new Promise(r => chrome.storage.local.get(localKeys, r)));
+
+    Promise.all(promises).then(results => {
+        if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+            return;
+        }
+        // Merge results
+        const combined = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+        resolve(combined);
+    }).catch(reject);
 });
 
 /**
- * Wraps chrome.storage.sync.set with a promise.
- * @param {Object} items
- * @returns {Promise<void>}
+ * Smart Setter: Routes items to correct storage area
  */
 const setStorage = (items) => new Promise((resolve, reject) => {
-    chrome.storage.sync.set(items, () => {
-        if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
+    const syncItems = {};
+    const localItems = {};
+    let hasSync = false;
+    let hasLocal = false;
+
+    Object.entries(items).forEach(([key, value]) => {
+        if (STORAGE_AREAS[key] === 'local') {
+            localItems[key] = value;
+            hasLocal = true;
         } else {
-            resolve();
+            syncItems[key] = value;
+            hasSync = true;
         }
     });
+
+    const promises = [];
+    if (hasSync) promises.push(new Promise((r, j) => chrome.storage.sync.set(syncItems, () => chrome.runtime.lastError ? j(chrome.runtime.lastError) : r())));
+    if (hasLocal) promises.push(new Promise((r, j) => chrome.storage.local.set(localItems, () => chrome.runtime.lastError ? j(chrome.runtime.lastError) : r())));
+
+    Promise.all(promises).then(() => resolve()).catch(reject);
 });
+
 
 export const StorageService = {
     async getFoldersData() {
         const data = await getStorage([STORAGE_KEYS.FOLDER_ORDER, STORAGE_KEYS.FOLDERS]);
+        let folders = data[STORAGE_KEYS.FOLDERS] || {};
+
+        // Decompression Logic
+        if (typeof folders === 'string') {
+            // Try decompress
+            const decompressed = LZString.decompressFromUTF16(folders);
+            if (decompressed) {
+                try {
+                    folders = JSON.parse(decompressed);
+                } catch (e) {
+                    console.error('Failed to parse decompressed folders', e);
+                    folders = {};
+                }
+            } else {
+                console.warn('Decompression returned null');
+            }
+        }
+
         return {
             folderOrder: data[STORAGE_KEYS.FOLDER_ORDER] || [],
-            folders: data[STORAGE_KEYS.FOLDERS] || {},
+            folders: folders, // Object
         };
     },
 
@@ -64,7 +121,11 @@ export const StorageService = {
     },
 
     async updateFolders(folders) {
-        await setStorage({ [STORAGE_KEYS.FOLDERS]: folders });
+        // Compression Logic
+        const jsonString = JSON.stringify(folders);
+        const compressed = LZString.compressToUTF16(jsonString);
+
+        await setStorage({ [STORAGE_KEYS.FOLDERS]: compressed });
     },
 
     async createFolder(name = 'New Folder') {
@@ -80,10 +141,8 @@ export const StorageService = {
         const newFolders = { ...folders, [id]: newFolder };
         const newOrder = [id, ...folderOrder];
 
-        await setStorage({
-            [STORAGE_KEYS.FOLDERS]: newFolders,
-            [STORAGE_KEYS.FOLDER_ORDER]: newOrder,
-        });
+        await this.updateFolders(newFolders);
+        await this.saveFolderOrder(newOrder);
         return id;
     },
 
@@ -93,10 +152,8 @@ export const StorageService = {
         const { [folderId]: deleted, ...remainingFolders } = folders;
         const newOrder = folderOrder.filter((id) => id !== folderId);
 
-        await setStorage({
-            [STORAGE_KEYS.FOLDERS]: remainingFolders,
-            [STORAGE_KEYS.FOLDER_ORDER]: newOrder,
-        });
+        await this.updateFolders(remainingFolders);
+        await this.saveFolderOrder(newOrder);
     },
 
     async getChatCache() {
@@ -164,11 +221,11 @@ export const StorageService = {
         const data = await getStorage([STORAGE_KEYS.SETTINGS, STORAGE_KEYS.ENABLED]);
         return {
             settings: data[STORAGE_KEYS.SETTINGS] || DEFAULT_SETTINGS,
-            enabled: data[STORAGE_KEYS.ENABLED] !== false, // Default to true if undefined
+            enabled: data[STORAGE_KEYS.ENABLED] !== false,
         };
     },
 
     async toggleEnabled(newState) {
         await setStorage({ [STORAGE_KEYS.ENABLED]: newState });
-    }
+    },
 };
