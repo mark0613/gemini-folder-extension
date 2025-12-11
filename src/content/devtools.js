@@ -1,3 +1,4 @@
+import bytes from 'bytes';
 import { StorageService } from './storage';
 
 /**
@@ -28,11 +29,20 @@ const DevTools = {
     },
 
     usage() {
-        chrome.storage.sync.getBytesInUse(null, (bytes) => {
-            console.log(`[SYNC Usage] ${bytes} / 102400 bytes (${(bytes / 102400 * 100).toFixed(1)}%)`);
+        chrome.storage.sync.getBytesInUse(null, (b) => {
+            const max = chrome.storage.sync.QUOTA_BYTES || 102400;
+            const usage = bytes(b);
+            const maxStr = bytes(max);
+            const percent = (b / max * 100).toFixed(1);
+            console.log(`[SYNC Usage] ${usage} / ${maxStr} (${percent}%)`);
         });
-        chrome.storage.local.getBytesInUse(null, (bytes) => {
-            console.log(`[LOCAL Usage] ${bytes} bytes`);
+
+        chrome.storage.local.getBytesInUse(null, (b) => {
+            const max = chrome.storage.local.QUOTA_BYTES || 5242880;
+            const usage = bytes(b);
+            const maxStr = bytes(max);
+            const percent = (b / max * 100).toFixed(1);
+            console.log(`[LOCAL Usage] ${usage} / ${maxStr} (${percent}%)`);
         });
     },
 
