@@ -15,6 +15,7 @@ const DevTools = {
         const { folderOrder, folders } = await StorageService.getFoldersData();
         const chatCache = await StorageService.getChatCache();
         const { settings, enabled } = await StorageService.getSettings();
+        const theme = await StorageService.getTheme();
 
         const dump = {
             folderOrder,
@@ -22,6 +23,7 @@ const DevTools = {
             chatCache,
             settings,
             enabled,
+            theme,
         };
 
         console.log('[GeminiFolder Storage Dump]', dump);

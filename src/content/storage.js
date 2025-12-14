@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
     CHAT_CACHE: 'chatCache',
     SETTINGS: 'settings',
     ENABLED: 'enabled',
+    THEME: 'theme',
 };
 
 export const FOLDER_COLORS = {
@@ -29,6 +30,7 @@ const STORAGE_AREAS = {
     [STORAGE_KEYS.FOLDER_ORDER]: 'sync',
     [STORAGE_KEYS.SETTINGS]: 'sync',
     [STORAGE_KEYS.ENABLED]: 'sync',
+    [STORAGE_KEYS.THEME]: 'sync',
 };
 
 /**
@@ -278,5 +280,14 @@ export const StorageService = {
 
     async toggleEnabled(newState) {
         await setStorage({ [STORAGE_KEYS.ENABLED]: newState });
+    },
+
+    async getTheme() {
+        const data = await getStorage([STORAGE_KEYS.THEME]);
+        return data[STORAGE_KEYS.THEME] || 'light'; // Default to light
+    },
+
+    async setTheme(theme) {
+        await setStorage({ [STORAGE_KEYS.THEME]: theme });
     },
 };

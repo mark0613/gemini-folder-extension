@@ -4,6 +4,7 @@ import { FolderPlus, MessageSquarePlus } from 'lucide-react';
 import ToggleSwitch from './ToggleSwitch';
 import FolderList from './FolderList';
 import UncategorizedList from './UncategorizedList';
+import { useTheme } from '../hooks/useTheme';
 import './Overlay.css';
 
 export const Overlay = () => {
@@ -139,29 +140,15 @@ export const Overlay = () => {
             return (b.lastSync || 0) - (a.lastSync || 0);
         });
 
-    // Theme Detection
-    const [isDarkMode, setIsDarkMode] = useState(false); // Default to Light Mode
-
-    useEffect(() => {
-        const checkTheme = () => {
-            const isDark = document.body.classList.contains('dark-theme');
-            setIsDarkMode(isDark);
-        };
-
-        checkTheme();
-
-        const themeObserver = new MutationObserver(checkTheme);
-        themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-
-        return () => themeObserver.disconnect();
-    }, []);
+    // Theme Detection (auto-detects Gemini and syncs to storage)
+    const { themeClass } = useTheme();
 
     if (!isInitialized) return null;
 
     return (
         <>
             <div
-                className={`gf-sidebar ${!enabled ? 'hidden' : ''} ${isDarkMode ? 'gf-theme-dark' : 'gf-theme-light'}`}
+                className={`gf-sidebar ${!enabled ? 'hidden' : ''} ${themeClass}`}
                 style={{ width: SIDEBAR_WIDTH }}
             >
                 <div className="gf-header">
