@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { StorageService, STORAGE_KEYS } from '../content/storage';
+import { useEffect, useState } from 'react';
+
+import { STORAGE_KEYS, StorageService } from '../content/storage';
 
 /**
  * Hook to manage theme state
@@ -22,9 +23,9 @@ export const useTheme = () => {
         chrome.storage.onChanged.addListener(handleStorageChange);
 
         // Detect if we're on Gemini website by checking for body element
-        const isOnGemini = typeof document !== 'undefined' &&
-            document.body &&
-            window.location.hostname.includes('gemini.google.com');
+        const isOnGemini = typeof document !== 'undefined'
+            && document.body
+            && window.location.hostname.includes('gemini.google.com');
 
         let themeObserver;
         if (isOnGemini) {

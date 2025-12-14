@@ -1,10 +1,14 @@
-import { useState, useEffect } from 'react';
-import { StorageService, STORAGE_KEYS, GEMINI_APP_URL } from '../content/storage';
+import { useEffect, useState } from 'react';
+
 import { FolderPlus, MessageSquarePlus } from 'lucide-react';
-import ToggleSwitch from './ToggleSwitch';
-import FolderList from './FolderList';
-import UncategorizedList from './UncategorizedList';
+
+import { GEMINI_APP_URL, STORAGE_KEYS, StorageService } from '../content/storage';
 import { useTheme } from '../hooks/useTheme';
+
+import FolderList from './FolderList';
+import ToggleSwitch from './ToggleSwitch';
+import UncategorizedList from './UncategorizedList';
+
 import './Overlay.css';
 
 export const Overlay = () => {
@@ -12,7 +16,7 @@ export const Overlay = () => {
     const [folders, setFolders] = useState({});
     const [folderOrder, setFolderOrder] = useState([]);
     const [chatCache, setChatCache] = useState({});
-    // eslint-disable-next-line no-unused-vars
+
     const [activeChatId, setActiveChatId] = useState(null);
     const [isInitialized, setIsInitialized] = useState(false);
 
@@ -37,16 +41,17 @@ export const Overlay = () => {
         loadData();
 
         // Listen for changes from other tabs or the observer
-        const handleStorageChange = (changes, area) => {
+        const handleStorageChange = (changes) => {
             if (changes[STORAGE_KEYS.ENABLED]) {
                 setEnabled(changes[STORAGE_KEYS.ENABLED].newValue);
             }
 
             if (changes[STORAGE_KEYS.FOLDERS]) {
-                let raw = changes[STORAGE_KEYS.FOLDERS].newValue;
+                const raw = changes[STORAGE_KEYS.FOLDERS].newValue;
                 if (typeof raw === 'string') {
-                    StorageService.getFoldersData().then(data => setFolders(data.folders));
-                } else if (raw) {
+                    StorageService.getFoldersData().then((data) => setFolders(data.folders));
+                }
+                else if (raw) {
                     setFolders(raw);
                 }
             }
@@ -67,7 +72,8 @@ export const Overlay = () => {
             const match = window.location.href.match(/app\/([a-zA-Z0-9]+)/);
             if (match && match[1]) {
                 setActiveChatId(match[1]);
-            } else {
+            }
+            else {
                 setActiveChatId(null);
             }
         };
@@ -101,18 +107,13 @@ export const Overlay = () => {
 
     const handleNewChat = () => {
         // Trigger native new chat
-        const newChatBtn = document.querySelector('.conversation-items-container .conversation-title');
-        // NOTE: The selector for "New Chat" button needs to be precise.
-        // In Gemini, it's usually at the top or sidebar.
-        // Valid selector: `a[href="/app"]` or similar.
-        // Let's try redirect for now.
         window.location.href = GEMINI_APP_URL;
     };
 
     // Calculate chats in folders vs uncategorized
     const chatsInFolders = new Set();
-    Object.values(folders || {}).forEach(f => {
-        if (f.chatIds) f.chatIds.forEach(id => chatsInFolders.add(id));
+    Object.values(folders || {}).forEach((f) => {
+        if (f.chatIds) f.chatIds.forEach((id) => chatsInFolders.add(id));
     });
 
     const uncategorizedChats = Object.entries(chatCache || {})
@@ -123,8 +124,10 @@ export const Overlay = () => {
             const NOW = Date.now();
             const ACTIVE_THRESHOLD = 5 * 60 * 1000;
 
-            const aIsActive = (NOW - (a.lastSync || 0)) < ACTIVE_THRESHOLD && a.domIndex !== undefined;
-            const bIsActive = (NOW - (b.lastSync || 0)) < ACTIVE_THRESHOLD && b.domIndex !== undefined;
+            const aIsActive = (NOW - (a.lastSync || 0)) < ACTIVE_THRESHOLD
+                && a.domIndex !== undefined;
+            const bIsActive = (NOW - (b.lastSync || 0)) < ACTIVE_THRESHOLD
+                && b.domIndex !== undefined;
 
             // Tier 1: Both are Active (Visible in DOM) -> Sort by domIndex (0, 1, 2...)
             if (aIsActive && bIsActive) {
@@ -152,10 +155,10 @@ export const Overlay = () => {
                 style={{ width: SIDEBAR_WIDTH }}
             >
                 <div className="gf-header">
-                    <button className="gf-action-btn primary" onClick={handleNewChat}>
+                    <button type="button" className="gf-action-btn primary" onClick={handleNewChat}>
                         <MessageSquarePlus size={16} /> New Chat
                     </button>
-                    <button className="gf-action-btn" onClick={handleCreateFolder}>
+                    <button type="button" className="gf-action-btn" onClick={handleCreateFolder}>
                         <FolderPlus size={16} />
                     </button>
                 </div>

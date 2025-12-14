@@ -1,9 +1,15 @@
-import React from 'react';
+/* eslint-disable no-console */
+import { StrictMode } from 'react';
+
 import ReactDOM from 'react-dom/client';
-import { Overlay } from '../components/Overlay';
-import { chatObserver } from './observer';
-import '../components/index.css';
+
 import './devtools';
+
+import { Overlay } from '../components/Overlay';
+
+import { chatObserver } from './observer';
+
+import '../components/index.css';
 
 const MOUNT_POINT_ID = 'gemini-folder-overlay-root';
 
@@ -17,11 +23,12 @@ function init() {
         try {
             const root = ReactDOM.createRoot(mountPoint);
             root.render(
-                <React.StrictMode>
+                <StrictMode>
                     <Overlay />
-                </React.StrictMode>
+                </StrictMode>,
             );
-        } catch (e) {
+        }
+        catch (e) {
             console.error('Gemini Folder: React render failed', e);
         }
     }
@@ -34,6 +41,7 @@ function init() {
 // Gemini is a heavy SPA.
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
-} else {
+}
+else {
     init();
 }

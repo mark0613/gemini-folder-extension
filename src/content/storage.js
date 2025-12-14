@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import LZString from 'lz-string';
 
 export const STORAGE_KEYS = {
@@ -41,19 +42,28 @@ const getStorage = (keys) => new Promise((resolve, reject) => {
     const syncKeys = [];
     const localKeys = [];
 
-    keyArray.forEach(key => {
+    keyArray.forEach((key) => {
         if (STORAGE_AREAS[key] === 'local') {
             localKeys.push(key);
-        } else {
+        }
+        else {
             syncKeys.push(key);
         }
     });
 
     const promises = [];
-    if (syncKeys.length > 0) promises.push(new Promise(r => chrome.storage.sync.get(syncKeys, r)));
-    if (localKeys.length > 0) promises.push(new Promise(r => chrome.storage.local.get(localKeys, r)));
+    if (syncKeys.length > 0) {
+        promises.push(new Promise((r) => {
+            chrome.storage.sync.get(syncKeys, r);
+        }));
+    }
+    if (localKeys.length > 0) {
+        promises.push(new Promise((r) => {
+            chrome.storage.local.get(localKeys, r);
+        }));
+    }
 
-    Promise.all(promises).then(results => {
+    Promise.all(promises).then((results) => {
         if (chrome.runtime.lastError) {
             reject(chrome.runtime.lastError);
             return;
@@ -77,19 +87,41 @@ const setStorage = (items) => new Promise((resolve, reject) => {
         if (STORAGE_AREAS[key] === 'local') {
             localItems[key] = value;
             hasLocal = true;
-        } else {
+        }
+        else {
             syncItems[key] = value;
             hasSync = true;
         }
     });
 
     const promises = [];
-    if (hasSync) promises.push(new Promise((r, j) => chrome.storage.sync.set(syncItems, () => chrome.runtime.lastError ? j(chrome.runtime.lastError) : r())));
-    if (hasLocal) promises.push(new Promise((r, j) => chrome.storage.local.set(localItems, () => chrome.runtime.lastError ? j(chrome.runtime.lastError) : r())));
+    if (hasSync) {
+        promises.push(new Promise((r, j) => {
+            chrome.storage.sync.set(syncItems, () => {
+                if (chrome.runtime.lastError) {
+                    j(chrome.runtime.lastError);
+                }
+                else {
+                    r();
+                }
+            });
+        }));
+    }
+    if (hasLocal) {
+        promises.push(new Promise((r, j) => {
+            chrome.storage.local.set(localItems, () => {
+                if (chrome.runtime.lastError) {
+                    j(chrome.runtime.lastError);
+                }
+                else {
+                    r();
+                }
+            });
+        }));
+    }
 
     Promise.all(promises).then(() => resolve()).catch(reject);
 });
-
 
 export const StorageService = {
     async getFoldersData() {
@@ -103,18 +135,20 @@ export const StorageService = {
             if (decompressed) {
                 try {
                     folders = JSON.parse(decompressed);
-                } catch (e) {
+                }
+                catch (e) {
                     console.error('Failed to parse decompressed folders', e);
                     folders = {};
                 }
-            } else {
+            }
+            else {
                 console.warn('Decompression returned null');
             }
         }
 
         return {
             folderOrder: data[STORAGE_KEYS.FOLDER_ORDER] || [],
-            folders: folders, // Object
+            folders, // Object
         };
     },
 
@@ -150,7 +184,7 @@ export const StorageService = {
 
     async deleteFolder(folderId) {
         const { folderOrder, folders } = await this.getFoldersData();
-        // eslint-disable-next-line no-unused-vars
+
         const { [folderId]: deleted, ...remainingFolders } = folders;
         const newOrder = folderOrder.filter((id) => id !== folderId);
 
@@ -179,11 +213,8 @@ export const StorageService = {
         await setStorage({ [STORAGE_KEYS.CHAT_CACHE]: updatedCache });
     },
 
-
-
     /**
      * Batch update chat cache
-     * @param {Object.<string, {title: string, domIndex: number, lastSync?: number}>} updates - Object where keys are chat IDs and values are objects containing title, domIndex, and optional lastSync.
      */
     async batchUpdateChatCache(updates) {
         // updates: { [id]: { title, domIndex, lastSync } }
@@ -194,21 +225,21 @@ export const StorageService = {
             const current = data[id];
 
             // Check if meaningful change occurred
-            if (!current ||
-                current.title !== updateData.title ||
-                current.domIndex !== updateData.domIndex) {
-
+            if (!current
+                || current.title !== updateData.title
+                || current.domIndex !== updateData.domIndex) {
                 data[id] = {
-                    ...current, // Keep other keys if any (like folderId if we stored it here, but we store it in folder obj)
+                    ...current, // Keep other keys if any
                     ...updateData,
-                    lastSync: updateData.lastSync || Date.now()
+                    lastSync: updateData.lastSync || Date.now(),
                 };
                 changed = true;
-            } else if (current.lastSync !== updateData.lastSync) {
+            }
+            else if (current.lastSync !== updateData.lastSync) {
                 // Update lastSync even if title/domIndex are the same
                 data[id] = {
                     ...current,
-                    lastSync: updateData.lastSync || Date.now()
+                    lastSync: updateData.lastSync || Date.now(),
                 };
                 changed = true;
             }
@@ -226,14 +257,14 @@ export const StorageService = {
         const chatCache = await this.getChatCache();
 
         // 1. Remove from cache
-        chatIds.forEach(id => delete chatCache[id]);
+        chatIds.forEach((id) => delete chatCache[id]);
 
         // 2. Remove from folders
         let foldersChanged = false;
-        Object.keys(folders).forEach(folderId => {
+        Object.keys(folders).forEach((folderId) => {
             const folder = folders[folderId];
             const initialLength = folder.chatIds.length;
-            folder.chatIds = folder.chatIds.filter(id => !chatIds.includes(id));
+            folder.chatIds = folder.chatIds.filter((id) => !chatIds.includes(id));
             if (folder.chatIds.length !== initialLength) {
                 foldersChanged = true;
             }
@@ -250,9 +281,9 @@ export const StorageService = {
         let changed = false;
 
         // 1. Remove from all other folders
-        Object.keys(folders).forEach(fid => {
+        Object.keys(folders).forEach((fid) => {
             if (folders[fid].chatIds.includes(chatId)) {
-                folders[fid].chatIds = folders[fid].chatIds.filter(id => id !== chatId);
+                folders[fid].chatIds = folders[fid].chatIds.filter((id) => id !== chatId);
                 changed = true;
             }
         });

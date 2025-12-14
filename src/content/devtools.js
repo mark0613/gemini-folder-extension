@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 import bytes from 'bytes';
+
 import { StorageService } from './storage';
 
 /**
  * Dev Tools for Gemini Folder Extension
- * 
+ *
  * Usage:
  * 1. Open DevTools (F12) -> Console
  * 2. In the top-left dropdown, select your extension's context (not "top")
@@ -35,7 +37,7 @@ const DevTools = {
             const max = chrome.storage.sync.QUOTA_BYTES || 102400;
             const usage = bytes(b);
             const maxStr = bytes(max);
-            const percent = (b / max * 100).toFixed(1);
+            const percent = ((b * 100) / max).toFixed(1);
             console.log(`[SYNC Usage] ${usage} / ${maxStr} (${percent}%)`);
         });
 
@@ -43,7 +45,7 @@ const DevTools = {
             const max = chrome.storage.local.QUOTA_BYTES || 5242880;
             const usage = bytes(b);
             const maxStr = bytes(max);
-            const percent = (b / max * 100).toFixed(1);
+            const percent = ((b * 100) / max).toFixed(1);
             console.log(`[LOCAL Usage] ${usage} / ${maxStr} (${percent}%)`);
         });
     },

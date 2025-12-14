@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+
+import { ChevronDown, ChevronRight, MoreVertical } from 'lucide-react';
+
 import { StorageService } from '../content/storage';
-import { ChevronRight, ChevronDown, MoreVertical } from 'lucide-react';
+
 import FolderSettings from './FolderSettings';
+
 import './FolderItem.css';
 
 const FolderItem = ({ folderId, folder, children, index }) => {
@@ -9,10 +13,11 @@ const FolderItem = ({ folderId, folder, children, index }) => {
     const [nameInput, setNameInput] = useState(folder.name);
     const [showMenu, setShowMenu] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
+    const inputRef = useRef(null);
 
     const handleToggleCollapse = async (e) => {
         e.stopPropagation();
-        const newFolders = await StorageService.getFoldersData().then(d => d.folders);
+        const newFolders = await StorageService.getFoldersData().then((d) => d.folders);
         newFolders[folderId].collapsed = !newFolders[folderId].collapsed;
         await StorageService.updateFolders(newFolders);
     };
@@ -38,8 +43,8 @@ const FolderItem = ({ folderId, folder, children, index }) => {
                 const { folders } = await StorageService.getFoldersData();
 
                 // Remove from all folders first
-                Object.keys(folders).forEach(fid => {
-                    folders[fid].chatIds = folders[fid].chatIds.filter(id => id !== chatId);
+                Object.keys(folders).forEach((fid) => {
+                    folders[fid].chatIds = folders[fid].chatIds.filter((id) => id !== chatId);
                 });
 
                 // Add to target folder
@@ -60,7 +65,10 @@ const FolderItem = ({ folderId, folder, children, index }) => {
 
                 await StorageService.saveFolderOrder(newOrder);
             }
-        } catch (err) {
+        }
+        catch (err) {
+            // TODO: message
+            // eslint-disable-next-line no-console
             console.error('Drop failed', err);
         }
     };
@@ -75,6 +83,8 @@ const FolderItem = ({ folderId, folder, children, index }) => {
     };
 
     const handleDelete = async () => {
+        // TODO: 改用 Modal 而不是 confirm
+        // eslint-disable-next-line no-alert, no-restricted-globals
         if (confirm('Delete this folder? Chats will be moved to Uncategorized.')) {
             await StorageService.deleteFolder(folderId);
         }
@@ -88,18 +98,28 @@ const FolderItem = ({ folderId, folder, children, index }) => {
         }
     };
 
+    const handleStartRename = () => {
+        setIsRenaming(true);
+        setTimeout(() => inputRef.current?.focus(), 0);
+    };
+
     return (
         <div
             className="gf-folder-section"
             draggable={!isRenaming}
             onDragStart={handleDragStart}
-            onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+            onDragOver={(e) => {
+                e.preventDefault(); setIsDragOver(true);
+            }}
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleDrop}
         >
             <div
+                role="button"
+                tabIndex={0}
                 className={`gf-folder-header ${isDragOver ? 'drag-over' : ''}`}
                 onClick={handleToggleCollapse}
+                onKeyDown={(e) => e.key === 'Enter' && handleToggleCollapse(e)}
             >
                 <div style={{ marginRight: 6, color: '#8e918f', cursor: 'grab' }}>
                     {folder.collapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
@@ -112,14 +132,14 @@ const FolderItem = ({ folderId, folder, children, index }) => {
 
                     {isRenaming ? (
                         <input
+                            ref={inputRef}
                             className="gf-input"
-                            autoFocus
                             value={nameInput}
                             onChange={(e) => setNameInput(e.target.value)}
                             onBlur={handleRename}
                             onKeyDown={(e) => e.key === 'Enter' && handleRename()}
                             onClick={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()} // Prevent drag start on input
+                            onMouseDown={(e) => e.stopPropagation()}
                         />
                     ) : (
                         <span style={{ fontWeight: 500 }}>{folder.name}</span>
@@ -128,8 +148,11 @@ const FolderItem = ({ folderId, folder, children, index }) => {
 
                 <div style={{ position: 'relative' }}>
                     <button
+                        type="button"
                         className="gf-icon-btn"
-                        onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+                        onClick={(e) => {
+                            e.stopPropagation(); setShowMenu(!showMenu);
+                        }}
                         onMouseDown={(e) => e.stopPropagation()}
                     >
                         <MoreVertical size={14} />
@@ -138,7 +161,7 @@ const FolderItem = ({ folderId, folder, children, index }) => {
                     <FolderSettings
                         show={showMenu}
                         onClose={() => setShowMenu(false)}
-                        onRename={() => setIsRenaming(true)}
+                        onRename={handleStartRename}
                         onDelete={handleDelete}
                         onChangeColor={handleChangeColor}
                         currentColor={folder.color}

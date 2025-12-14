@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
-import { StorageService } from '../content/storage';
+import { useEffect, useState } from 'react';
+
 import { FolderPlus } from 'lucide-react';
+
+import { StorageService } from '../content/storage';
+
 import BasePopupMenu from './BasePopupMenu';
 
 const ChatSettings = ({ show, onClose, chatId, anchorRef, menuPos }) => {
@@ -11,7 +14,7 @@ const ChatSettings = ({ show, onClose, chatId, anchorRef, menuPos }) => {
         if (show) {
             setLoading(true);
             StorageService.getFoldersData()
-                .then(data => setFolders(data.folders))
+                .then((data) => setFolders(data.folders))
                 .finally(() => setLoading(false));
         }
     }, [show]);
@@ -38,8 +41,9 @@ const ChatSettings = ({ show, onClose, chatId, anchorRef, menuPos }) => {
                         fontWeight: 600,
                         color: 'var(--gf-text-muted)',
                         borderBottom: '1px solid var(--gf-border)',
-                        marginBottom: 4
-                    }}>
+                        marginBottom: 4,
+                    }}
+                    >
                         Move to...
                     </div>
                     {Object.entries(folders).length === 0 && (
@@ -48,8 +52,11 @@ const ChatSettings = ({ show, onClose, chatId, anchorRef, menuPos }) => {
                     {Object.entries(folders).map(([fid, folder]) => (
                         <div
                             key={fid}
+                            role="menuitem"
+                            tabIndex={0}
                             className="gf-menu-item"
                             onClick={() => handleMoveToFolder(fid)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleMoveToFolder(fid)}
                         >
                             <FolderPlus size={14} />
                             <span style={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis' }}>

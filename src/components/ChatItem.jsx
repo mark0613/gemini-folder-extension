@@ -1,7 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
-import { GEMINI_APP_URL } from '../content/storage';
+import { useRef, useState } from 'react';
+
 import { MoreVertical } from 'lucide-react';
+
+import { GEMINI_APP_URL } from '../content/storage';
+
 import ChatSettings from './ChatSettings';
+
 import './ChatItem.css';
 
 const ChatItem = ({ chatId, title, isActive }) => {
@@ -26,7 +30,7 @@ const ChatItem = ({ chatId, title, isActive }) => {
             const rect = buttonRef.current.getBoundingClientRect();
             setMenuPos({
                 top: rect.bottom + 5,
-                left: rect.right - 140 // Align right edge
+                left: rect.right - 140, // Align right edge
             });
         }
         setShowMenu(!showMenu);
@@ -34,10 +38,13 @@ const ChatItem = ({ chatId, title, isActive }) => {
 
     return (
         <div
+            role="button"
+            tabIndex={0}
             className={`gf-chat-item ${isActive ? 'active' : ''}`}
             draggable="true"
             onDragStart={handleDragStart}
             onClick={handleClick}
+            onKeyDown={(e) => e.key === 'Enter' && handleClick()}
             title={title}
             style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
@@ -47,6 +54,7 @@ const ChatItem = ({ chatId, title, isActive }) => {
 
             <div className={`gf-chat-actions ${showMenu ? 'active' : ''}`}>
                 <button
+                    type="button"
                     ref={buttonRef}
                     className="gf-icon-btn"
                     onClick={handleToggleMenu}

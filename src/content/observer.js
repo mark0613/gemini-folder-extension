@@ -1,5 +1,5 @@
+/* eslint-disable no-console */
 import { StorageService } from './storage';
-
 
 const SELECTORS = {
     ROOT_CONTAINER: '#conversations-list-0',
@@ -40,9 +40,9 @@ class ChatObserver {
         });
 
         this.isObserving = true;
+
         console.log('Gemini Folder: Observer started');
 
-        // Initial scan
         this.scanList();
     }
 
@@ -57,16 +57,20 @@ class ChatObserver {
     handleMutations(mutations) {
         let needsScan = false;
 
-        mutations.forEach(mutation => {
+        mutations.forEach((mutation) => {
             if (mutation.type === 'childList') {
                 // Check Removed Nodes for Deletion
-                mutation.removedNodes.forEach(node => {
+                mutation.removedNodes.forEach((node) => {
                     if (node.nodeType === 1) { // Element
                         // Try to find the chat ID in the removed node
                         // It might be the node itself or a wrapper
-                        const conversionDiv = node.matches && node.matches(SELECTORS.ITEM_WITH_JSLOG)
-                            ? node
-                            : (node.querySelector ? node.querySelector(SELECTORS.ITEM_WITH_JSLOG) : null);
+                        let conversionDiv = null;
+                        if (node.matches && node.matches(SELECTORS.ITEM_WITH_JSLOG)) {
+                            conversionDiv = node;
+                        }
+                        else if (node.querySelector) {
+                            conversionDiv = node.querySelector(SELECTORS.ITEM_WITH_JSLOG);
+                        }
 
                         if (conversionDiv) {
                             const jslog = conversionDiv.getAttribute('jslog');
@@ -78,7 +82,8 @@ class ChatObserver {
                     }
                 });
                 needsScan = true;
-            } else if (mutation.type === 'characterData' || mutation.type === 'attributes') {
+            }
+            else if (mutation.type === 'characterData' || mutation.type === 'attributes') {
                 needsScan = true;
             }
         });
@@ -106,7 +111,7 @@ class ChatObserver {
             return;
         }
 
-        this.pendingDeletions.forEach(id => {
+        this.pendingDeletions.forEach((id) => {
             // Double Check: Is this ID present in the CURRENT DOM?
             // We construct a partial selector or assume standard scanList would find it.
             // But strict check is faster:
@@ -127,7 +132,8 @@ class ChatObserver {
         }
     }
 
-    async scanList() {
+    // eslint-disable-next-line class-methods-use-this
+    scanList() {
         const root = document.querySelector(SELECTORS.ROOT_CONTAINER);
         if (!root) return;
 
@@ -137,7 +143,6 @@ class ChatObserver {
 
         const updates = {};
         const currentVisibleIds = new Set();
-        let activeChatId = null;
         let domIndex = 0; // Track visual order
 
         chatItems.forEach((item) => {
@@ -152,32 +157,30 @@ class ChatObserver {
             if (match && match[1]) {
                 const chatId = match[1];
                 currentVisibleIds.add(chatId);
-                const currentIndex = domIndex++; // Capture order
+                const currentIndex = domIndex; // Capture order
+                domIndex += 1;
 
                 // Extract Title
                 const titleEl = item.querySelector(SELECTORS.TITLE);
                 const title = titleEl ? titleEl.innerText : 'Untitled';
 
                 updates[chatId] = {
-                    title: title,
+                    title,
                     domIndex: currentIndex,
-                    lastSync: Date.now() // Treat scan as sync
+                    lastSync: Date.now(), // Treat scan as sync
                 };
-
-                // Check if active
-                if (conversionDiv.classList.contains(SELECTORS.SELECTED)) {
-                    activeChatId = chatId;
-                }
             }
         });
 
         // Batch update storage
         if (Object.keys(updates).length > 0) {
-            await StorageService.batchUpdateChatCache(updates);
+            StorageService.batchUpdateChatCache(updates);
         }
-        // TODO: Dispatch event for UI to update current active state if needed (though UI might just listen to storage, 
+        // TODO: Dispatch event for UI to update current active state
+        // if needed (though UI might just listen to storage,
         // active state in native UI is ephemeral, we might want to track looking at URL too).
-        // For now, let's trust URL based navigation for active state, or use this to highlight our sidebar.
+        // For now, let's trust URL based navigation for active state,
+        // or use this to highlight our sidebar.
     }
 }
 

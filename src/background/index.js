@@ -1,5 +1,4 @@
-/* global chrome */
-
+/* eslint-disable no-console */
 const DEFAULT_STATE = {
     folderOrder: [], // 資料夾 ID 順序 (array)
     folders: {}, // 資料夾內容
@@ -30,6 +29,7 @@ chrome.runtime.onInstalled.addListener((details) => {
             });
         }
         else {
+            console.log('[Gemini Folder Extension] Data already exists, skipping initialization.');
             console.log('[Gemini Folder Extension] Data already exists, skipping initialization.');
         }
     });

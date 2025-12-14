@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
+
 import ReactDOM from 'react-dom/client';
+
 import { StorageService } from '../content/storage';
 import { useTheme } from '../hooks/useTheme';
+
 import '../components/index.css';
 import './Popup.css';
 
@@ -11,8 +14,8 @@ const Popup = () => {
     const { themeClass } = useTheme();
 
     useEffect(() => {
-        StorageService.getSettings().then(({ enabled }) => {
-            setEnabled(enabled);
+        StorageService.getSettings().then(({ enabled: isEnabled }) => {
+            setEnabled(isEnabled);
         });
     }, []);
 
@@ -27,15 +30,17 @@ const Popup = () => {
             <h2 className="gf-popup-title">Gemini Folder</h2>
 
             <div className="gf-popup-toggle-row">
-                <span>Overlay Enabled</span>
-                <label className="gf-toggle-switch">
+                <span id="overlay-toggle-label">Overlay Enabled</span>
+                <label className="gf-toggle-switch" htmlFor="overlay-toggle">
                     <input
+                        id="overlay-toggle"
                         type="checkbox"
                         checked={enabled}
                         onChange={toggle}
+                        aria-labelledby="overlay-toggle-label"
                     />
-                    <span className={`gf-toggle-track ${enabled ? 'active' : ''}`}></span>
-                    <span className={`gf-toggle-thumb ${enabled ? 'active' : ''}`}></span>
+                    <span className={`gf-toggle-track ${enabled ? 'active' : ''}`} />
+                    <span className={`gf-toggle-thumb ${enabled ? 'active' : ''}`} />
                 </label>
             </div>
 
@@ -46,9 +51,11 @@ const Popup = () => {
     );
 };
 
+export default Popup;
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
+    <StrictMode>
         <Popup />
-    </React.StrictMode>
+    </StrictMode>,
 );
