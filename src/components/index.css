@@ -1,0 +1,75 @@
+/* Global CSS Variables & Utilities */
+
+/* Light Mode (Default) */
+:root,
+.gf-theme-light {
+    --gf-bg-sidebar: #ffffff;
+    --gf-bg-header: #ffffff;
+    --gf-border: #e3e3e3;
+    --gf-text-primary: #1f1f1f;
+    --gf-text-secondary: #444746;
+    --gf-text-muted: #757575;
+    --gf-text-danger: #d93025;
+
+    --gf-btn-bg: #f0f4f9;
+    --gf-btn-hover: #e3e3e3;
+    --gf-btn-primary-bg: #d3e3fd;
+    --gf-btn-primary-color: #041e49;
+
+    --gf-hover-bg: #e3e3e3;
+    --gf-active-bg: #d3e3fd;
+    --gf-active-border: #0b57d0;
+
+    --gf-input-border: #0b57d0;
+}
+
+/* Dark Mode Overrides */
+.gf-theme-dark {
+    --gf-bg-sidebar: #1e1f20;
+    --gf-bg-header: #1e1f20;
+    --gf-border: #444746;
+    --gf-text-primary: #e3e3e3;
+    --gf-text-secondary: #c4c7c5;
+    --gf-text-muted: #8e918f;
+    --gf-text-danger: #ff4d4f;
+
+    --gf-btn-bg: #2b2c2e;
+    --gf-btn-hover: #3c4043;
+    --gf-btn-primary-bg: #373e4b;
+    --gf-btn-primary-color: #a8c7fa;
+
+    --gf-hover-bg: #3c4043;
+    --gf-active-bg: #373e4b;
+    --gf-active-border: #a8c7fa;
+
+    --gf-input-border: #a8c7fa;
+}
+
+/* Utilities */
+.gf-input {
+    background: transparent;
+    border: 1px solid var(--gf-input-border);
+    color: var(--gf-text-primary);
+    border-radius: 4px;
+    padding: 4px 8px;
+    width: 100%;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.gf-icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--gf-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gf-icon-btn:hover {
+    background-color: rgba(128, 128, 128, 0.15);
+    color: var(--gf-text-primary);
+}

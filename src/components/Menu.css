@@ -1,0 +1,78 @@
+/* Menu Styles */
+
+.gf-helper-menu,
+.gf-folder-menu {
+    background-color: var(--gf-btn-bg);
+    border: 1px solid var(--gf-border);
+    border-radius: 4px;
+    z-index: 10000;
+    padding: 4px;
+    min-width: 120px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.gf-folder-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+}
+
+.gf-helper-menu {
+    width: max-content;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Scrollbar for menu */
+.gf-helper-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.gf-helper-menu::-webkit-scrollbar-thumb {
+    background-color: var(--gf-border);
+    border-radius: 3px;
+}
+
+.gf-menu-item {
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--gf-text-primary);
+    font-size: 13px;
+    border-radius: 4px;
+    transition: background-color 0.1s;
+}
+
+.gf-menu-item:hover {
+    background-color: var(--gf-hover-bg);
+    color: var(--gf-text-primary);
+}
+
+.gf-menu-item.delete {
+    color: var(--gf-text-danger);
+}
+
+.gf-menu-item.delete:hover {
+    background-color: rgba(255, 77, 79, 0.1);
+}
+
+.gf-folder-menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99;
+    cursor: default;
+}
+
+.gf-menu-colors {
+    padding: 8px;
+    border-top: 1px solid var(--gf-border);
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}

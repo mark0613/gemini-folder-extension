@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StorageService } from '../content/storage';
 import { ChevronRight, ChevronDown, MoreVertical } from 'lucide-react';
 import FolderSettings from './FolderSettings';
+import './FolderItem.css';
 
 const FolderItem = ({ folderId, folder, children, index }) => {
     const [isRenaming, setIsRenaming] = useState(folder.name === 'New Folder');

@@ -1,0 +1,38 @@
+/* Folder Item Styles */
+
+.gf-folder-section {
+    margin-bottom: 4px;
+}
+
+.gf-folder-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--gf-text-primary);
+    transition: background-color 0.1s;
+}
+
+.gf-folder-header:hover {
+    background-color: var(--gf-hover-bg);
+}
+
+.gf-folder-header.drag-over {
+    background-color: var(--gf-hover-bg);
+    border: 2px dashed var(--gf-active-border);
+}
+
+.gf-folder-content {
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
+
+.gf-uncategorized-header {
+    padding: 12px 16px 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--gf-text-muted);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}

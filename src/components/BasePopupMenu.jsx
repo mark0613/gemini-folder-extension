@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import './Menu.css';
 
 /**
  * Base Popup Menu Component

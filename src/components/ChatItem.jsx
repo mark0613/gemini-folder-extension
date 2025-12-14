@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { GEMINI_APP_URL } from '../content/storage';
 import { MoreVertical } from 'lucide-react';
 import ChatSettings from './ChatSettings';
+import './ChatItem.css';
 
 const ChatItem = ({ chatId, title, isActive }) => {
     const [showMenu, setShowMenu] = useState(false);

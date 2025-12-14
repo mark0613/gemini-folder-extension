@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Overlay } from '../components/Overlay';
 import { chatObserver } from './observer';
+import '../components/index.css';
 import './devtools';
 
 const MOUNT_POINT_ID = 'gemini-folder-overlay-root';

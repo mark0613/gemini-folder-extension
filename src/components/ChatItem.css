@@ -1,0 +1,34 @@
+/* Chat Item Styles */
+
+.gf-chat-item {
+    padding: 8px 16px 8px 36px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gf-text-secondary);
+    display: block;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+}
+
+.gf-chat-item:hover {
+    background-color: var(--gf-hover-bg);
+}
+
+.gf-chat-item.active {
+    background-color: var(--gf-active-bg);
+    color: var(--gf-text-primary);
+    border-left-color: var(--gf-active-border);
+}
+
+.gf-chat-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.gf-chat-item:hover .gf-chat-actions,
+.gf-chat-actions.active {
+    opacity: 1;
+}

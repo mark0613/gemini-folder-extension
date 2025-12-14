@@ -161,7 +161,7 @@ export const Overlay = () => {
     return (
         <>
             <div
-                className={`gf-sidebar ${!enabled ? 'hidden' : ''} ${!isDarkMode ? 'gf-theme-light' : ''}`}
+                className={`gf-sidebar ${!enabled ? 'hidden' : ''} ${isDarkMode ? 'gf-theme-dark' : 'gf-theme-light'}`}
                 style={{ width: SIDEBAR_WIDTH }}
             >
                 <div className="gf-header">
