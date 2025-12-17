@@ -15,7 +15,7 @@ const ChatItem = ({ chatId, title, isActive }) => {
 
     const handleDragStart = (e) => {
         e.stopPropagation(); // Prevent parent (like Folder) from dragging
-        e.dataTransfer.setData('application/json', JSON.stringify({ chatId }));
+        e.dataTransfer.setData('application/json', JSON.stringify({ chatId, type: 'chat' }));
         e.dataTransfer.effectAllowed = 'move';
     };
 
