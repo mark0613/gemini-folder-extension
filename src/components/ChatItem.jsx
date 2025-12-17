@@ -19,32 +19,26 @@ const ChatItem = ({ chatId, title, isActive }) => {
         e.dataTransfer.effectAllowed = 'move';
     };
 
-    const handleClick = () => {
-        window.location.href = `${GEMINI_APP_URL}/${chatId}`;
-    };
-
     const handleToggleMenu = (e) => {
+        e.preventDefault();
         e.stopPropagation();
         if (!showMenu && buttonRef.current) {
             // Calculate position before showing to avoid flicker/misalignment
             const rect = buttonRef.current.getBoundingClientRect();
             setMenuPos({
                 top: rect.bottom + 5,
-                left: rect.right - 140, // Align right edge
+                left: rect.right - 140,
             });
         }
         setShowMenu(!showMenu);
     };
 
     return (
-        <div
-            role="button"
-            tabIndex={0}
+        <a
+            href={`${GEMINI_APP_URL}/${chatId}`}
             className={`gf-chat-item ${isActive ? 'active' : ''}`}
             draggable="true"
             onDragStart={handleDragStart}
-            onClick={handleClick}
-            onKeyDown={(e) => e.key === 'Enter' && handleClick()}
             title={title}
             style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
@@ -72,7 +66,7 @@ const ChatItem = ({ chatId, title, isActive }) => {
                     menuPos={menuPos}
                 />
             </div>
-        </div>
+        </a>
     );
 };
 
