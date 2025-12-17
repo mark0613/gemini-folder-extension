@@ -66,8 +66,18 @@ const ChatSettings = ({ show, onClose, chatId, anchorRef, menuPos, folderId }) =
                             role="menuitem"
                             tabIndex={0}
                             className="gf-menu-item"
-                            onClick={() => handleMoveToFolder(fid)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleMoveToFolder(fid)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleMoveToFolder(fid);
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleMoveToFolder(fid);
+                                }
+                            }}
                         >
                             <FolderPlus size={14} />
                             <span style={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis' }}>
