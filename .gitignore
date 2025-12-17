@@ -26,3 +26,4 @@ dist-ssr
 # build and certs
 *.crx
 *.pem
+zip/*.zip
