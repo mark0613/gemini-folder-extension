@@ -19,6 +19,7 @@ export const Overlay = () => {
 
     const [activeChatId, setActiveChatId] = useState(null);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [newFolderId, setNewFolderId] = useState(null);
 
     // Width constant, moved from CSS for dynamic control
     const SIDEBAR_WIDTH = 308;
@@ -102,7 +103,12 @@ export const Overlay = () => {
     };
 
     const handleCreateFolder = async () => {
-        await StorageService.createFolder();
+        const id = await StorageService.createFolder();
+        setNewFolderId(id);
+    };
+
+    const handleFolderRenamed = () => {
+        setNewFolderId(null);
     };
 
     const handleNewChat = () => {
@@ -169,6 +175,8 @@ export const Overlay = () => {
                         folderOrder={folderOrder}
                         chatCache={chatCache}
                         activeChatId={activeChatId}
+                        newFolderId={newFolderId}
+                        onFolderRenamed={handleFolderRenamed}
                     />
 
                     <div className="gf-uncategorized-header">Recents</div>

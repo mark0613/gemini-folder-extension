@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ChevronDown, ChevronRight, MoreVertical } from 'lucide-react';
 
@@ -8,12 +8,19 @@ import FolderSettings from './FolderSettings';
 
 import './FolderItem.css';
 
-const FolderItem = ({ folderId, folder, children, index }) => {
-    const [isRenaming, setIsRenaming] = useState(folder.name === 'New Folder');
+const FolderItem = ({ folderId, folder, children, index, isNew, onRenamed }) => {
+    const [isRenaming, setIsRenaming] = useState(false);
     const [nameInput, setNameInput] = useState(folder.name);
     const [showMenu, setShowMenu] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
     const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (isNew) {
+            setIsRenaming(true);
+            setTimeout(() => inputRef.current?.focus(), 0);
+        }
+    }, [isNew]);
 
     const handleToggleCollapse = async (e) => {
         e.stopPropagation();
@@ -80,6 +87,7 @@ const FolderItem = ({ folderId, folder, children, index }) => {
             folders[folderId].name = nameInput;
             await StorageService.updateFolders(folders);
         }
+        if (onRenamed) onRenamed();
     };
 
     const handleDelete = async () => {

@@ -1,7 +1,14 @@
 import ChatItem from './ChatItem';
 import FolderItem from './FolderItem';
 
-const FolderList = ({ folders, folderOrder, chatCache, activeChatId }) => (
+const FolderList = ({
+    folders,
+    folderOrder,
+    chatCache,
+    activeChatId,
+    newFolderId,
+    onFolderRenamed,
+}) => (
     <div className="gf-folder-list">
         {folderOrder.map((folderId, index) => {
             const folder = folders[folderId];
@@ -14,6 +21,8 @@ const FolderList = ({ folders, folderOrder, chatCache, activeChatId }) => (
                     folderId={folderId}
                     folder={folder}
                     index={index}
+                    isNew={folderId === newFolderId}
+                    onRenamed={onFolderRenamed}
                 >
                     {chatIds.map((chatId) => {
                         const chat = chatCache[chatId] || { title: 'Unknown Chat' };
