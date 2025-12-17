@@ -137,7 +137,12 @@ const FolderItem = ({ folderId, folder, children, index }) => {
                             value={nameInput}
                             onChange={(e) => setNameInput(e.target.value)}
                             onBlur={handleRename}
-                            onKeyDown={(e) => e.key === 'Enter' && handleRename()}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.stopPropagation();
+                                    handleRename();
+                                }
+                            }}
                             onClick={(e) => e.stopPropagation()}
                             onMouseDown={(e) => e.stopPropagation()}
                         />
