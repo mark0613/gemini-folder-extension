@@ -32,6 +32,7 @@ const FolderList = ({
                                 chatId={chatId}
                                 title={chat.title}
                                 isActive={activeChatId === chatId}
+                                folderId={folderId}
                             />
                         );
                     })}

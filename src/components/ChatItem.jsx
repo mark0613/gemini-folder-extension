@@ -8,7 +8,7 @@ import ChatSettings from './ChatSettings';
 
 import './ChatItem.css';
 
-const ChatItem = ({ chatId, title, isActive }) => {
+const ChatItem = ({ chatId, title, isActive, folderId }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
     const buttonRef = useRef(null);
@@ -64,6 +64,7 @@ const ChatItem = ({ chatId, title, isActive }) => {
                     chatId={chatId}
                     anchorRef={buttonRef}
                     menuPos={menuPos}
+                    folderId={folderId}
                 />
             </div>
         </a>
