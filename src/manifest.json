@@ -22,8 +22,7 @@
     }
   ],
   "permissions": [
-    "storage",
-    "activeTab"
+    "storage"
   ],
   "host_permissions": [
     "https://gemini.google.com/*"
