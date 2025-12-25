@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Gemini Folder Extension",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAh3EYTqUrz+uxrKdL6zuOBs2AUh9mI82GSnoAzNMoLwqa2R+SQJMyn9pJ/QLBjT69b2RGLvzSum/h8Z/kiNKqdAdrq+GpWEh2MhYQ42IFjdhSvjLV64jK5ied4UVea20VHWd5e3kUoPgZ7c6q5bkqrWEAgjrsUsgbFrKmfNIIwQp5RNHabqevjZvyj2dhUmWRlkM/2zgkyfJ5lhpY+AYdWMtOAFCorS13qYAz41yMfSIRpx4kP43fmA+0U5mE1/qC/GNZBUr/pbvtQZPKpnxAgcrg9mDxoG1sxpze+OTEub+NHh/nF5v/m24aUDU3PUty7UxwC6CxMhMIaPkTIzNXAwIDAQAB",
   "action": {
     "default_popup": "index.html"
