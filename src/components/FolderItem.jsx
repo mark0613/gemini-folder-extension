@@ -14,6 +14,7 @@ const FolderItem = ({ folderId, folder, children, index, isNew, onRenamed }) => 
     const [showMenu, setShowMenu] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
     const inputRef = useRef(null);
+    const menuButtonRef = useRef(null);
 
     useEffect(() => {
         if (isNew) {
@@ -162,6 +163,7 @@ const FolderItem = ({ folderId, folder, children, index, isNew, onRenamed }) => 
                 <div style={{ position: 'relative' }}>
                     <button
                         type="button"
+                        ref={menuButtonRef}
                         className="gf-icon-btn"
                         onClick={(e) => {
                             e.stopPropagation(); setShowMenu(!showMenu);
@@ -178,6 +180,7 @@ const FolderItem = ({ folderId, folder, children, index, isNew, onRenamed }) => 
                         onDelete={handleDelete}
                         onChangeColor={handleChangeColor}
                         currentColor={folder.color}
+                        anchorRef={menuButtonRef}
                     />
                 </div>
             </div>

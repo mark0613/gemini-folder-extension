@@ -11,12 +11,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.gf-folder-menu {
-    position: absolute;
-    right: 0;
-    top: 100%;
-}
-
 .gf-helper-menu {
     width: max-content;
     max-height: 200px;

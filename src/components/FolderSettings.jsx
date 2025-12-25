@@ -4,10 +4,19 @@ import { FOLDER_COLORS } from '../content/storage';
 
 import BasePopupMenu from './BasePopupMenu';
 
-const FolderSettings = ({ show, onClose, onRename, onDelete, onChangeColor, currentColor }) => (
+const FolderSettings = ({
+    show,
+    onClose,
+    onRename,
+    onDelete,
+    onChangeColor,
+    currentColor,
+    anchorRef,
+}) => (
     <BasePopupMenu
         show={show}
         onClose={onClose}
+        anchorRef={anchorRef}
         className="gf-folder-menu"
     >
         <div

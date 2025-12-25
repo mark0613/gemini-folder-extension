@@ -10,7 +10,6 @@ import './ChatItem.css';
 
 const ChatItem = ({ chatId, title, isActive, folderId }) => {
     const [showMenu, setShowMenu] = useState(false);
-    const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
     const buttonRef = useRef(null);
 
     const handleDragStart = (e) => {
@@ -22,14 +21,6 @@ const ChatItem = ({ chatId, title, isActive, folderId }) => {
     const handleToggleMenu = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!showMenu && buttonRef.current) {
-            // Calculate position before showing to avoid flicker/misalignment
-            const rect = buttonRef.current.getBoundingClientRect();
-            setMenuPos({
-                top: rect.bottom + 5,
-                left: rect.right - 140,
-            });
-        }
         setShowMenu(!showMenu);
     };
 
@@ -63,7 +54,6 @@ const ChatItem = ({ chatId, title, isActive, folderId }) => {
                     onClose={() => setShowMenu(false)}
                     chatId={chatId}
                     anchorRef={buttonRef}
-                    menuPos={menuPos}
                     folderId={folderId}
                 />
             </div>

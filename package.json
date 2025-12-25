@@ -12,6 +12,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.16",
     "async-mutex": "^0.5.0",
     "bytes": "^3.1.2",
     "lucide-react": "^0.525.0",

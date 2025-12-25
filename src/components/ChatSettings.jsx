@@ -6,7 +6,7 @@ import { StorageService } from '../content/storage';
 
 import BasePopupMenu from './BasePopupMenu';
 
-const ChatSettings = ({ show, onClose, chatId, anchorRef, menuPos, folderId }) => {
+const ChatSettings = ({ show, onClose, chatId, anchorRef, folderId }) => {
     const [folders, setFolders] = useState({});
     const [loading, setLoading] = useState(false);
 
@@ -40,7 +40,6 @@ const ChatSettings = ({ show, onClose, chatId, anchorRef, menuPos, folderId }) =
             show={show}
             onClose={onClose}
             anchorRef={anchorRef}
-            position={menuPos}
         >
             {loading ? (
                 <div style={{ padding: 8, fontSize: 12, color: '#888' }}>Loading...</div>
