@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight, MoreVertical } from 'lucide-react';
 
 import { StorageService } from '../content/storage';
 
-import FolderSettings from './FolderSettings';
+import FolderMenu from './FolderMenu';
 
 import './FolderItem.css';
 
@@ -173,7 +173,7 @@ const FolderItem = ({ folderId, folder, children, index, isNew, onRenamed }) => 
                         <MoreVertical size={14} />
                     </button>
 
-                    <FolderSettings
+                    <FolderMenu
                         show={showMenu}
                         onClose={() => setShowMenu(false)}
                         onRename={handleStartRename}

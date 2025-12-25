@@ -4,7 +4,7 @@ import { FOLDER_COLORS } from '../content/storage';
 
 import BasePopupMenu from './BasePopupMenu';
 
-const FolderSettings = ({
+const FolderMenu = ({
     show,
     onClose,
     onRename,
@@ -86,4 +86,4 @@ const FolderSettings = ({
     </BasePopupMenu>
 );
 
-export default FolderSettings;
+export default FolderMenu;

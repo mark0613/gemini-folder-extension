@@ -6,7 +6,7 @@ import { StorageService } from '../content/storage';
 
 import BasePopupMenu from './BasePopupMenu';
 
-const ChatSettings = ({ show, onClose, chatId, anchorRef, folderId }) => {
+const ChatMenu = ({ show, onClose, chatId, anchorRef, folderId }) => {
     const [folders, setFolders] = useState({});
     const [loading, setLoading] = useState(false);
 
@@ -122,4 +122,4 @@ const ChatSettings = ({ show, onClose, chatId, anchorRef, folderId }) => {
     );
 };
 
-export default ChatSettings;
+export default ChatMenu;

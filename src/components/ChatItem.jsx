@@ -4,7 +4,7 @@ import { MoreVertical } from 'lucide-react';
 
 import { GEMINI_APP_URL } from '../content/storage';
 
-import ChatSettings from './ChatSettings';
+import ChatMenu from './ChatMenu';
 
 import './ChatItem.css';
 
@@ -49,7 +49,7 @@ const ChatItem = ({ chatId, title, isActive, folderId }) => {
                     <MoreVertical size={14} />
                 </button>
 
-                <ChatSettings
+                <ChatMenu
                     show={showMenu}
                     onClose={() => setShowMenu(false)}
                     chatId={chatId}
