@@ -1,9 +1,15 @@
-import { useEffect, useState } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 
 import { FolderPlus, MessageSquarePlus } from 'lucide-react';
 
 import { GEMINI_APP_URL, STORAGE_KEYS, StorageService } from '../content/storage';
 import { useTheme } from '../hooks/useTheme';
+import { triggerScroll } from '../utils/geminiScroller';
 
 import FolderList from './FolderList';
 import ToggleSwitch from './ToggleSwitch';
@@ -20,6 +26,9 @@ export const Overlay = () => {
     const [activeChatId, setActiveChatId] = useState(null);
     const [isInitialized, setIsInitialized] = useState(false);
     const [newFolderId, setNewFolderId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const scrollAreaRef = useRef(null);
 
     // Width constant, moved from CSS for dynamic control
     const SIDEBAR_WIDTH = 308;
@@ -116,6 +125,22 @@ export const Overlay = () => {
         window.location.href = GEMINI_APP_URL;
     };
 
+    const handleScroll = useCallback(() => {
+        const scrollArea = scrollAreaRef.current;
+        if (!scrollArea || isLoading) return;
+
+        const threshold = 50;
+        const isAtBottom = scrollArea.scrollHeight
+            - scrollArea.scrollTop - scrollArea.clientHeight < threshold;
+
+        if (isAtBottom) {
+            triggerScroll({
+                onLoading: () => setIsLoading(true),
+                onComplete: () => setIsLoading(false),
+            });
+        }
+    }, [isLoading]);
+
     // Calculate chats in folders vs uncategorized
     const chatsInFolders = new Set();
     Object.values(folders || {}).forEach((f) => {
@@ -169,7 +194,7 @@ export const Overlay = () => {
                     </button>
                 </div>
 
-                <div className="gf-scroll-area">
+                <div className="gf-scroll-area" ref={scrollAreaRef} onScroll={handleScroll}>
                     <FolderList
                         folders={folders}
                         folderOrder={folderOrder}
@@ -185,6 +210,13 @@ export const Overlay = () => {
                         chats={uncategorizedChats}
                         activeChatId={activeChatId}
                     />
+
+                    {isLoading && (
+                        <div className="gf-loading-indicator">
+                            <div className="gf-loading-spinner" />
+                            Loading...
+                        </div>
+                    )}
                 </div>
             </div>
 

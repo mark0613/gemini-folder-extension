@@ -85,3 +85,29 @@
     background-color: var(--gf-border);
     border-radius: 4px;
 }
+
+/* Loading Indicator */
+.gf-loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    color: var(--gf-text-muted);
+    font-size: 13px;
+}
+
+.gf-loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--gf-border);
+    border-top-color: var(--gf-active-border);
+    border-radius: 50%;
+    animation: gf-spin 0.8s linear infinite;
+}
+
+@keyframes gf-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
