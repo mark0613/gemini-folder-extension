@@ -2,10 +2,10 @@
 import { StorageService } from './storage';
 
 const SELECTORS = {
-    ROOT_CONTAINER: '#conversations-list-0',
+    ROOT_CONTAINER: 'conversations-list',
     CHAT_ITEM: '.conversation-items-container',
     // Extract ID from jslog attribute: jslog="...; box:[...,["c_cdebef2d22fce225",...]]..."
-    ITEM_WITH_JSLOG: 'div.conversation',
+    ITEM_WITH_JSLOG: 'a.conversation',
     TITLE: '.conversation-title',
     SELECTED: 'selected', // Class when active
 };
